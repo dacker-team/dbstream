@@ -1,17 +1,11 @@
-import os
 import setuptools
-from pip._internal.req import parse_requirements
-from pip._internal.download import PipSession
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-requirements = parse_requirements(os.path.join(os.path.dirname(__file__), 'requirements.txt'), session=PipSession())
-
-
 setuptools.setup(
     name="dbstream",
-    version="0.0.2",
+    version="0.0.6",
     author="Dacker",
     author_email="hello@dacker.co",
     description="A meta package to be connected to several databases",
@@ -25,5 +19,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3',
-    install_requires=[str(requirement.req) for requirement in requirements],
+    install_requires=[
+        "sshtunnel==0.1.5"
+    ],
 )
