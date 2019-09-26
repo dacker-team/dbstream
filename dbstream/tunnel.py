@@ -3,7 +3,7 @@ from sshtunnel import SSHTunnelForwarder, HandlerSSHTunnelForwarderError
 from dbstream.tools.print_colors import C
 
 
-def create_ssh_tunnel(instance, port):
+def create_ssh_tunnel(instance, port, remote_host, remote_port):
     # Create an SSH tunnel
     ssh_host = os.environ["SSH_%s_HOST" % instance]
     ssh_user = os.environ["SSH_%s_USER" % instance]
@@ -20,8 +20,7 @@ def create_ssh_tunnel(instance, port):
         (ssh_host, 22),
         ssh_username=ssh_user,
         ssh_pkey=ssh_path_private_key,
-        remote_bind_address=(
-            os.environ["RED_%s_HOST" % instance], int(os.environ["RED_%s_PORT" % instance])),
+        remote_bind_address=(remote_host, int(remote_port)),
         local_bind_address=('localhost', port),  # could be any available port
     )
     try:
