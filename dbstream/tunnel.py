@@ -1,5 +1,5 @@
 import os
-from sshtunnel import SSHTunnelForwarder, HandlerSSHTunnelForwarderError
+from sshtunnel import SSHTunnelForwarder, HandlerSSHTunnelForwarderError, create_logger
 from dbstream.tools.print_colors import C
 
 
@@ -30,5 +30,5 @@ def create_ssh_tunnel(instance, port, remote_host, remote_port):
     except HandlerSSHTunnelForwarderError:
         print(C.OKBLUE + 'HandlerSSHTunnelForwarderError' + ' [<<<<<]' + C.ENDC)
         port = port + 1
-        return create_ssh_tunnel(instance, port)
+        return create_ssh_tunnel(instance=instance, port=port, remote_port=remote_port, remote_host=remote_host)
 
