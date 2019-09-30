@@ -16,6 +16,7 @@ def create_ssh_tunnel(instance, port, remote_host, remote_port):
             w.close()
     except KeyError:
         ssh_path_private_key = os.environ["SSH_%s_PATH_PRIVATE_KEY" % instance]
+        print(C.OKBLUE + 'Private Key used' + C.ENDC)
 
     tunnel = SSHTunnelForwarder(
         (ssh_host, 22),
