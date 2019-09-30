@@ -9,6 +9,7 @@ def create_ssh_tunnel(instance, port, remote_host, remote_port):
     ssh_user = os.environ["SSH_%s_USER" % instance]
     try:
         ssh_private_key = os.environ["SSH_%s_PRIVATE_KEY" % instance]
+        ssh_private_key = ssh_private_key.replace('\\n', '\n')
         ssh_path_private_key = 'ssh_path_private_key'
         with open(ssh_path_private_key, 'w') as w:
             w.write(ssh_private_key)
