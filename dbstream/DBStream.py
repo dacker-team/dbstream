@@ -1,14 +1,24 @@
+import copy
+import datetime
+import json
 import os
+import random
+
+import requests
+
 from dbstream.tunnel import create_ssh_tunnel
 
 
 class DBStream:
 
-    def __init__(self, instance_name):
+    def __init__(self, instance_name, client_id):
         self.instance_name = instance_name
         self.instance_type_prefix = ""
         self.ssh_init_port = ""
+        self.client_id = client_id
         self.ssh_tunnel = None
+        self.dbstream_instance_id = 'df-' + datetime.datetime.now().strftime('%s') + '-' + str(
+            random.randint(1000, 9999))
 
     def prefix(self):
         return self.instance_type_prefix + "_" + self.instance_name
@@ -46,8 +56,30 @@ class DBStream:
     def execute_query(self, query):
         pass
 
-    def send_data(self, data, replace=True):
+    def _send_data_custom(self, data, replace=True):
         pass
 
     def _send(self, data, replace, batch_size=1000):
         pass
+
+    def send_data(self, data, replace=True):
+        data_copy = copy.deepcopy(data)
+        if self._send_data_custom(data, replace=replace) != 0:
+            url = os.environ.get("MONITORING_URL")
+            if url:
+                table_schema_name = data_copy["table_name"].split(".")
+                body = {
+                    "dbstream_instance_id": self.dbstream_instance_id,
+                    "instance_name": self.instance_name,
+                    "client_id": self.client_id,
+                    "instance_type_prefix": self.instance_type_prefix,
+                    "schema_name": table_schema_name[0],
+                    "table_name": table_schema_name[1],
+                    "nb_rows": len(data_copy["rows"]),
+                    "nb_columns": len(data_copy["columns_name"]),
+                    "timestamp": str(datetime.datetime.now()),
+                    "ssh_tunnel": True if self.ssh_tunnel else False,
+                    "local_absolute_path": os.getcwd()
+                }
+                r = requests.post(url=url, data=json.dumps(body))
+                print(r.status_code)
