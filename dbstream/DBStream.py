@@ -56,15 +56,15 @@ class DBStream:
     def execute_query(self, query):
         pass
 
-    def _send_data_custom(self, data, replace=True):
+    def _send_data_custom(self, data, replace, **kwargs):
         pass
 
-    def _send(self, data, replace, batch_size=1000):
+    def _send(self, **args):
         pass
 
-    def send_data(self, data, replace=True):
+    def send_data(self, data, replace=True, **kwargs):
         data_copy = copy.deepcopy(data)
-        if self._send_data_custom(data, replace=replace) != 0:
+        if self._send_data_custom(data, replace, **kwargs) != 0:
             url = os.environ.get("MONITORING_URL")
             if url:
                 table_schema_name = data_copy["table_name"].split(".")
