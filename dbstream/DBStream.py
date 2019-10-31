@@ -4,6 +4,7 @@ import json
 import os
 import random
 
+import re
 import requests
 
 from dbstream.tunnel import create_ssh_tunnel
@@ -53,8 +54,36 @@ class DBStream:
         )
         return self.ssh_tunnel
 
-    def execute_query(self, query):
+    def _execute_query_custom(self, query) -> dict:
         pass
+
+    def execute_query(self, query):
+        query = re.sub(' +', ' ', query)
+        query = re.sub(' +\n', '\n', query)
+        result = self._execute_query_custom(query)
+        if isinstance(result, dict):
+            if result.get('execute_query'):
+                query_create_table = result.get('execute_query').group(0)
+                schema_name = query_create_table.split('.')[0]
+                table_name = query_create_table.split('.')[1]
+                url = os.environ.get("MONITORING_URL")
+                if url:
+                    body = {
+                        "dbstream_instance_id": self.dbstream_instance_id,
+                        "instance_name": self.instance_name,
+                        "client_id": self.client_id,
+                        "instance_type_prefix": self.instance_type_prefix,
+                        "timestamp": str(datetime.datetime.now()),
+                        "ssh_tunnel": True if self.ssh_tunnel else False,
+                        "local_absolute_path": os.getcwd(),
+                        "execute_query": True,
+                        'schema_name': schema_name,
+                        'table_name': table_name
+                    }
+                    r = requests.post(url=url, data=json.dumps(body))
+                    print(r.status_code)
+            return None
+        return result
 
     def _send_data_custom(self, data, replace, **kwargs):
         pass
@@ -79,7 +108,8 @@ class DBStream:
                     "nb_columns": len(data_copy["columns_name"]),
                     "timestamp": str(datetime.datetime.now()),
                     "ssh_tunnel": True if self.ssh_tunnel else False,
-                    "local_absolute_path": os.getcwd()
+                    "local_absolute_path": os.getcwd(),
+                    "replace": replace
                 }
                 r = requests.post(url=url, data=json.dumps(body))
                 print(r.status_code)
