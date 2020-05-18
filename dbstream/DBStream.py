@@ -113,3 +113,10 @@ class DBStream:
                 }
                 r = requests.post(url=url, data=json.dumps(body))
                 print(r.status_code)
+
+
+    def send_temp_data(self, data, schema_prefix, table, column_names):
+        pass
+
+    def clean(self, selecting_id, schema_prefix, table):
+        pass
