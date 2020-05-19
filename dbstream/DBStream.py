@@ -120,3 +120,6 @@ class DBStream:
 
     def clean(self, selecting_id, schema_prefix, table):
         pass
+
+    def send_with_temp_table(self, data, column_names, selecting_id, schema_prefix, table):
+        pass
