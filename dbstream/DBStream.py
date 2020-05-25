@@ -117,7 +117,7 @@ class DBStream:
     def send_temp_data(self, data, schema_prefix, table, column_names):
         data_to_send = {
             "columns_name": column_names,
-            "rows": [[r[c] for c in column_names] for r in data],
+            "rows": [[r.get(c) for c in column_names] for r in data],
             "table_name": schema_prefix + '.' + table + '_temp'}
         self.send_data(
             data=data_to_send,
