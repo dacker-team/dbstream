@@ -113,3 +113,20 @@ class DBStream:
                 }
                 r = requests.post(url=url, data=json.dumps(body))
                 print(r.status_code)
+
+    def send_temp_data(self, data, schema_prefix, table, column_names):
+        data_to_send = {
+            "columns_name": column_names,
+            "rows": [[r[c] for c in column_names] for r in data],
+            "table_name": schema_prefix + '.' + table + '_temp'}
+        self.send_data(
+            data=data_to_send,
+            other_table_to_update=schema_prefix + '.' + table,
+            replace=False)
+
+    def clean(self, selecting_id, schema_prefix, table):
+        pass
+
+    def send_with_temp_table(self, data, column_names, selecting_id, schema_prefix, table):
+        self.send_temp_data(data, schema_prefix, table, column_names)
+        self.clean(selecting_id, schema_prefix, table)
