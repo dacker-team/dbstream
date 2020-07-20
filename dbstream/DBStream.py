@@ -131,5 +131,5 @@ class DBStream:
         self.send_temp_data(data, schema_prefix, table, column_names)
         self.clean(selecting_id, schema_prefix, table)
 
-    def get_max(self, schema, table, field):
+    def get_max(self, schema, table, field, filter_clause):
         pass
