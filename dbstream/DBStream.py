@@ -6,7 +6,7 @@ import random
 
 import re
 import requests
-
+from dacktool import log_error
 from dbstream.tunnel import create_ssh_tunnel
 
 
@@ -55,7 +55,7 @@ class DBStream:
         return self.ssh_tunnel
 
     def _execute_query_custom(self, query) -> dict:
-        pass
+        log_error("Function _execute_query_custom is not defined")
 
     def execute_query(self, query):
         query = re.sub(' +', ' ', query)
@@ -125,11 +125,23 @@ class DBStream:
             replace=False)
 
     def clean(self, selecting_id, schema_prefix, table):
-        pass
+        log_error("Function clean is not defined")
 
     def send_with_temp_table(self, data, column_names, selecting_id, schema_prefix, table):
         self.send_temp_data(data, schema_prefix, table, column_names)
         self.clean(selecting_id, schema_prefix, table)
 
     def get_max(self, schema, table, field, filter_clause):
-        pass
+        log_error("Function get_max is not defined")
+
+    def get_data_type(self, table_name, schema_name):
+        log_error("Function get_data_type is not defined")
+
+    def create_view_from_columns(self, view_name, columns, schema_name, table_name):
+        log_error("Function create_view_from_columns is not defined")
+
+    def create_schema(self, schema_name):
+        log_error("Function create_schema is not defined")
+
+    def drop_schema(self, schema_name):
+        log_error("Function drop_schema is not defined")
