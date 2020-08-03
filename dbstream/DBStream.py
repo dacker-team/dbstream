@@ -6,7 +6,6 @@ import random
 
 import re
 import requests
-from dacktool import log_error
 from dbstream.tunnel import create_ssh_tunnel
 
 
@@ -20,6 +19,9 @@ class DBStream:
         self.ssh_tunnel = None
         self.dbstream_instance_id = 'df-' + datetime.datetime.now().strftime('%s') + '-' + str(
             random.randint(1000, 9999))
+
+    def error_if_function_not_exist(self, function_name):
+        raise Exception("Function %s is not defined for %s" % (function_name, type(self).__name__))
 
     def prefix(self):
         return self.instance_type_prefix + "_" + self.instance_name
@@ -55,7 +57,7 @@ class DBStream:
         return self.ssh_tunnel
 
     def _execute_query_custom(self, query) -> dict:
-        log_error("Function _execute_query_custom is not defined")
+        self.error_if_function_not_exist("_execute_query_custom")
 
     def execute_query(self, query):
         query = re.sub(' +', ' ', query)
@@ -125,23 +127,23 @@ class DBStream:
             replace=False)
 
     def clean(self, selecting_id, schema_prefix, table):
-        log_error("Function clean is not defined")
+        self.error_if_function_not_exist("clean")
 
     def send_with_temp_table(self, data, column_names, selecting_id, schema_prefix, table):
         self.send_temp_data(data, schema_prefix, table, column_names)
         self.clean(selecting_id, schema_prefix, table)
 
     def get_max(self, schema, table, field, filter_clause):
-        log_error("Function get_max is not defined")
+        self.error_if_function_not_exist("get_max")
 
     def get_data_type(self, table_name, schema_name):
-        log_error("Function get_data_type is not defined")
+        self.error_if_function_not_exist("get_data_type")
 
     def create_view_from_columns(self, view_name, columns, schema_name, table_name):
-        log_error("Function create_view_from_columns is not defined")
+        self.error_if_function_not_exist("create_view_from_columns")
 
     def create_schema(self, schema_name):
-        log_error("Function create_schema is not defined")
+        self.error_if_function_not_exist("create_schema")
 
     def drop_schema(self, schema_name):
-        log_error("Function drop_schema is not defined")
+        self.error_if_function_not_exist("drop_schema")
