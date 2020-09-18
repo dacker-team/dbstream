@@ -147,3 +147,6 @@ class DBStream:
 
     def drop_schema(self, schema_name):
         self.error_if_function_not_exist("drop_schema")
+
+    def schema_compare(self,schema_ref, new_schema_test):
+        pass
