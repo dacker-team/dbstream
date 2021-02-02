@@ -1,6 +1,6 @@
 import re
 
-regex = "(?:(FROM|JOIN)\s+)(\w+)[.](\w+)"
+regex = "(?:(FROM|JOIN|INTO)\s+)(\w+)[.](\w+)"
 
 
 def replace_query_details(query, schema_suffix_to_add):
