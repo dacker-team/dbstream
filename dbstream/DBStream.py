@@ -6,12 +6,14 @@ import random
 
 import re
 import requests
+
+from dbstream.tools.regex import replace_query_details
 from dbstream.tunnel import create_ssh_tunnel
 
 
 class DBStream:
 
-    def __init__(self, instance_name, client_id):
+    def __init__(self, instance_name, client_id, special_env=None):
         self.instance_name = instance_name
         self.instance_type_prefix = ""
         self.ssh_init_port = ""
@@ -19,6 +21,7 @@ class DBStream:
         self.ssh_tunnel = None
         self.dbstream_instance_id = 'df-' + datetime.datetime.now().strftime('%s') + '-' + str(
             random.randint(1000, 9999))
+        self.special_env = special_env if special_env else None
 
     def error_if_function_not_exist(self, function_name):
         raise Exception("Function %s is not defined for %s" % (function_name, type(self).__name__))
@@ -59,9 +62,11 @@ class DBStream:
     def _execute_query_custom(self, query) -> dict:
         self.error_if_function_not_exist("_execute_query_custom")
 
-    def execute_query(self, query):
+    def execute_query(self, query, apply_special_env=True):
         query = re.sub(' +', ' ', query)
         query = re.sub(' +\n', '\n', query)
+        if apply_special_env and self.special_env:
+            query = replace_query_details(query, self.special_env)
         result = self._execute_query_custom(query)
         if isinstance(result, dict):
             if result.get('execute_query'):
