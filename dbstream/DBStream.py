@@ -99,15 +99,16 @@ class DBStream:
         pass
 
     def send_data(self, data, replace=True, apply_special_env=True, **kwargs):
-        if apply_special_env and self.special_env:
-            schema_name = data["table_name"].split(".")[0]
-            table_name = data["table_name"].split(".")[1]
-            data["table_name"] = "%s_%s.%s" % (schema_name, self.special_env, table_name)
         data_copy = copy.deepcopy(data)
+        if apply_special_env and self.special_env:
+            table_name = data_copy["table_name"][1]
+            schema_name = data_copy["table_name"][1]
+            data_copy["table_name"] = "%s_%s.%s" % (schema_name, self.special_env, table_name)
+        data_copy2 = copy.deepcopy(data_copy)
         if self._send_data_custom(data, replace, **kwargs) != 0:
             url = os.environ.get("MONITORING_URL")
             if url:
-                table_schema_name = data_copy["table_name"].split(".")
+                table_schema_name = data_copy2["table_name"].split(".")
                 body = {
                     "dbstream_instance_id": self.dbstream_instance_id,
                     "instance_name": self.instance_name,
@@ -115,8 +116,8 @@ class DBStream:
                     "instance_type_prefix": self.instance_type_prefix,
                     "schema_name": table_schema_name[0],
                     "table_name": table_schema_name[1],
-                    "nb_rows": len(data_copy["rows"]),
-                    "nb_columns": len(data_copy["columns_name"]),
+                    "nb_rows": len(data_copy2["rows"]),
+                    "nb_columns": len(data_copy2["columns_name"]),
                     "timestamp": str(datetime.datetime.now()),
                     "ssh_tunnel": True if self.ssh_tunnel else False,
                     "local_absolute_path": os.getcwd(),
