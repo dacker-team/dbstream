@@ -98,7 +98,11 @@ class DBStream:
     def _send(self, **args):
         pass
 
-    def send_data(self, data, replace=True, **kwargs):
+    def send_data(self, data, replace=True, apply_special_env=True, **kwargs):
+        if apply_special_env and self.special_env:
+            table_name = data["table_name"][1]
+            schema_name = data["table_name"][1]
+            data["table_name"] = "%s_%s.%s" % (schema_name, self.special_env, table_name)
         data_copy = copy.deepcopy(data)
         if self._send_data_custom(data, replace, **kwargs) != 0:
             url = os.environ.get("MONITORING_URL")
@@ -121,7 +125,7 @@ class DBStream:
                 r = requests.post(url=url, data=json.dumps(body))
                 print(r.status_code)
 
-    def send_temp_data(self, data, schema_prefix, table, column_names):
+    def send_temp_data(self, data, schema_prefix, table, column_names, apply_special_env=True):
         data_to_send = {
             "columns_name": column_names,
             "rows": [[r.get(c) for c in column_names] for r in data],
@@ -129,7 +133,8 @@ class DBStream:
         self.send_data(
             data=data_to_send,
             other_table_to_update=schema_prefix + '.' + table,
-            replace=False)
+            replace=False,
+            apply_special_env=apply_special_env)
 
     def clean(self, selecting_id, schema_prefix, table):
         self.error_if_function_not_exist("clean")
