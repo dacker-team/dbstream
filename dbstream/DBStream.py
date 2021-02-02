@@ -66,7 +66,7 @@ class DBStream:
         query = re.sub(' +', ' ', query)
         query = re.sub(' +\n', '\n', query)
         if apply_special_env and self.special_env:
-            query = replace_query_details(query, self.special_env)
+            query = replace_query_details(query, self.special_env)[0]
         result = self._execute_query_custom(query)
         if isinstance(result, dict):
             if result.get('execute_query'):
