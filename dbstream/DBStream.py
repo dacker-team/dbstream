@@ -101,8 +101,8 @@ class DBStream:
     def send_data(self, data, replace=True, apply_special_env=True, **kwargs):
         data_copy = copy.deepcopy(data)
         if apply_special_env and self.special_env:
-            table_name = data_copy["table_name"][1]
-            schema_name = data_copy["table_name"][1]
+            schema_name = data_copy["table_name"].split(".")[0]
+            table_name = data_copy["table_name"].split(".")[1]
             data_copy["table_name"] = "%s_%s.%s" % (schema_name, self.special_env, table_name)
         data_copy2 = copy.deepcopy(data_copy)
         if self._send_data_custom(data_copy, replace, **kwargs) != 0:
