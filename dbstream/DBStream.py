@@ -104,6 +104,11 @@ class DBStream:
             schema_name = data_copy["table_name"].split(".")[0]
             table_name = data_copy["table_name"].split(".")[1]
             data_copy["table_name"] = "%s_%s.%s" % (schema_name, self.special_env, table_name)
+            if kwargs.get("other_table_to_update"):
+                schema_name = kwargs["other_table_to_update"].split(".")[0]
+                table_name = kwargs["other_table_to_update"].split(".")[1]
+                kwargs["other_table_to_update"] = "%s_%s.%s" % (schema_name, self.special_env, table_name)
+
         data_copy2 = copy.deepcopy(data_copy)
         if self._send_data_custom(data_copy, replace, **kwargs) != 0:
             url = os.environ.get("MONITORING_URL")
