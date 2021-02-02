@@ -105,7 +105,7 @@ class DBStream:
             schema_name = data_copy["table_name"][1]
             data_copy["table_name"] = "%s_%s.%s" % (schema_name, self.special_env, table_name)
         data_copy2 = copy.deepcopy(data_copy)
-        if self._send_data_custom(data, replace, **kwargs) != 0:
+        if self._send_data_custom(data_copy, replace, **kwargs) != 0:
             url = os.environ.get("MONITORING_URL")
             if url:
                 table_schema_name = data_copy2["table_name"].split(".")
