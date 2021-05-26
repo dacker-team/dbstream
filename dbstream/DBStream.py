@@ -163,3 +163,9 @@ class DBStream:
 
     def drop_schema(self, schema_name):
         self.error_if_function_not_exist("drop_schema")
+
+    def build_pydatasource_view(self, query_string):
+        self.error_if_function_not_exist("create_schema")
+
+    def build_pydatasource_table(self, query_string):
+        self.error_if_function_not_exist("create_schema")
