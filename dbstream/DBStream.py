@@ -5,8 +5,12 @@ import os
 import random
 
 import re
+from time import time
+
 import requests
 
+from dbstream.tools.dck_infos import generate_dck_info
+from dbstream.tools.parse_data import treat_json_data
 from dbstream.tools.regex import replace_query_details
 from dbstream.tunnel import create_ssh_tunnel
 
@@ -130,6 +134,28 @@ class DBStream:
                 }
                 r = requests.post(url=url, data=json.dumps(body))
                 print(r.status_code)
+
+    def send(self, data, replace=False, apply_special_env=True, **kwargs):
+        # data['data'] = generate_dck_info(data['data'])
+        list_of_tables_to_send, list_of_pop_fields = treat_json_data(data)
+        for d in list_of_tables_to_send:
+            # if d.get('table_name') == 'test.test_orders_fulfillments_line_items':
+            #     print(d.get('data'))
+            # else:
+            #     print('OK')
+            column_names = []
+            for r in d['data']:
+                for k in r.keys():
+                    if k in ('authorization', 'default'):
+                        k = k + '_'
+                    if k not in column_names:
+                        column_names.append(k)
+            data_to_send = {
+                "columns_name": column_names,
+                "rows": [[r.get(c) for c in column_names] for r in d['data']],
+                "table_name": d.get('table_name')
+            }
+            self.send_data(data=data_to_send, replace=replace, apply_special_env=apply_special_env, **kwargs)
 
     def send_temp_data(self, data, schema_prefix, table, column_names, apply_special_env=True):
         data_to_send = {

@@ -7,3 +7,5 @@ dist/
 *egg-info/
 *sandbox*
 .DS_Store
+env.sh
+data.json

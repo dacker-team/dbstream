@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dbstream",
-    version="0.0.31",
+    version="0.1.1",
     author="Dacker",
     author_email="hello@dacker.co",
     description="A meta package to be connected to several databases",
