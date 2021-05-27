@@ -195,3 +195,6 @@ class DBStream:
 
     def build_pydatasource_table(self, query_string):
         self.error_if_function_not_exist("create_schema")
+
+    def build_pydatasource_table_cascade(self, query_string):
+        self.error_if_function_not_exist("create_schema")
