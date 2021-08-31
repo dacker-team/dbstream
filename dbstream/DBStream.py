@@ -191,10 +191,10 @@ class DBStream:
         self.error_if_function_not_exist("drop_schema")
 
     def build_pydatasource_view(self, query_string):
-        self.error_if_function_not_exist("create_schema")
+        self.error_if_function_not_exist("build_pydatasource_view")
 
     def build_pydatasource_table(self, query_string):
-        self.error_if_function_not_exist("create_schema")
+        self.error_if_function_not_exist("build_pydatasource_table")
 
     def build_pydatasource_table_cascade(self, query_string):
-        self.error_if_function_not_exist("create_schema")
+        self.error_if_function_not_exist("build_pydatasource_table_cascade")
