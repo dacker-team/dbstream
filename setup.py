@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dbstream",
-    version="0.1.4",
+    version="0.1.5",
     author="Dacker",
     author_email="hello@dacker.co",
     description="A meta package to be connected to several databases",
@@ -21,6 +21,7 @@ setuptools.setup(
     python_requires='>=3',
     install_requires=[
         "sshtunnel==0.1.5",
-        "dacktool>=0.0.7"
+        "dacktool>=0.0.7",
+        "requests>=2.22.0"
     ],
 )

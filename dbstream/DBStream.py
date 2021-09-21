@@ -5,11 +5,10 @@ import os
 import random
 
 import re
-from time import time
+import time
 
 import requests
 
-from dbstream.tools.dck_infos import generate_dck_info
 from dbstream.tools.parse_data import treat_json_data
 from dbstream.tools.regex import replace_query_details
 from dbstream.tunnel import create_ssh_tunnel
@@ -23,8 +22,8 @@ class DBStream:
         self.ssh_init_port = ""
         self.client_id = client_id
         self.ssh_tunnel = None
-        self.dbstream_instance_id = 'df-' + datetime.datetime.now().strftime('%s') + '-' + str(
-            random.randint(1000, 9999))
+        unix_time = time.mktime(datetime.datetime.now().timetuple())
+        self.dbstream_instance_id = 'df-' + str(unix_time) + '-' + str(random.randint(1000, 9999))
         self.special_env = special_env if special_env else None
 
     def error_if_function_not_exist(self, function_name):
