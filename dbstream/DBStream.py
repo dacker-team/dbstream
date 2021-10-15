@@ -74,8 +74,13 @@ class DBStream:
         if isinstance(result, dict):
             if result.get('execute_query'):
                 query_create_table = result.get('execute_query').group(0)
-                schema_name = query_create_table.split('.')[0]
-                table_name = query_create_table.split('.')[1]
+                if len(query_create_table.split('.')) > 1:
+                    schema_name = query_create_table.split('.')[0]
+                    table_name = query_create_table.split('.')[1]
+                else:
+                    schema_name = None
+                    table_name = query_create_table.split('.')[0]
+
                 url = os.environ.get("MONITORING_URL")
                 if url:
                     body = {
