@@ -107,7 +107,7 @@ class DBStream:
         pass
 
     def send_data(self, data, replace=True, apply_special_env=True, **kwargs):
-        data["columns_name"] = [c.replace(".", "_") for c in data["columns_name"]]
+        data["columns_name"] = [c.replace(".", "_").replace("(", "_").replace(")", "_") for c in data["columns_name"]]
         data_copy = copy.deepcopy(data)
         if apply_special_env and self.special_env:
             schema_name = data_copy["table_name"].split(".")[0]
