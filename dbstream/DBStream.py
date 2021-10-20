@@ -160,7 +160,8 @@ class DBStream:
                 "rows": [[r.get(c) for c in column_names] for r in d['data']],
                 "table_name": d.get('table_name')
             }
-            self.send_data(data=data_to_send, replace=replace, apply_special_env=apply_special_env, **kwargs)
+            if len(data_to_send['columns_name']) > 0:
+                self.send_data(data=data_to_send, replace=replace, apply_special_env=apply_special_env, **kwargs)
 
     def send_temp_data(self, data, schema_prefix, table, column_names, apply_special_env=True):
         data_to_send = {
