@@ -13,6 +13,7 @@ from dbstream.tools.parse_data import treat_json_data
 from dbstream.tools.regex import replace_query_details
 from dbstream.tunnel import create_ssh_tunnel
 
+from google.api_core.exceptions import Forbidden
 
 class DBStream:
 
@@ -140,7 +141,7 @@ class DBStream:
                 r = requests.post(url=url, data=json.dumps(body))
                 print(r.status_code)
 
-    def send(self, data, replace=False, apply_special_env=True, **kwargs):
+    def send(self, data, replace=False, apply_special_env=True, delay=5, **kwargs):
         # data['data'] = generate_dck_info(data['data'])
         list_of_tables_to_send, list_of_pop_fields = treat_json_data(data)
         for d in list_of_tables_to_send:
@@ -161,7 +162,11 @@ class DBStream:
                 "table_name": d.get('table_name')
             }
             if len(data_to_send['columns_name']) > 0:
-                self.send_data(data=data_to_send, replace=replace, apply_special_env=apply_special_env, **kwargs)
+                try:
+                    self.send_data(data=data_to_send, replace=replace, apply_special_env=apply_special_env, **kwargs)
+                except Forbidden:
+                    time.sleep(delay)
+                    self.send_data(data=data_to_send, replace=replace, apply_special_env=apply_special_env, **kwargs)
 
     def send_temp_data(self, data, schema_prefix, table, column_names, apply_special_env=True):
         data_to_send = {
