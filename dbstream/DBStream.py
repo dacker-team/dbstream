@@ -141,9 +141,9 @@ class DBStream:
                 r = requests.post(url=url, data=json.dumps(body))
                 print(r.status_code)
 
-    def send(self, data, replace=False, apply_special_env=True, delay=5, batch_id=None, **kwargs):
+    def send(self, data, replace=False, apply_special_env=True, delay=5, batch_id=None, id_info='dck', **kwargs):
         # data['data'] = generate_dck_info(data['data'])
-        list_of_tables_to_send, list_of_pop_fields = treat_json_data(data, batch_id=batch_id)
+        list_of_tables_to_send, list_of_pop_fields = treat_json_data(data, batch_id=batch_id, id_info=id_info)
         for d in list_of_tables_to_send:
             # if d.get('table_name') == 'test.test_orders_fulfillments_line_items':
             #     print(d.get('data'))
