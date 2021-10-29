@@ -48,8 +48,8 @@ def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, 
                             rr = r[k][i]
                             if not isinstance(rr, dict):
                                 rr = {'value': rr}
-                            rr['__' + table_name.split('.')[1] + '__dck_id___'] = r['__dck_id___']
-                            rr['__' + table_name.split('.')[1] + '__dck_id___' + 'order'] = i
+                            rr['__' + table_name.split('.')[1] + f'__{id_info}_id___'] = r[f'__{id_info}_id___']
+                            rr['__' + table_name.split('.')[1] + f'__{id_info}_id___' + 'order'] = i
                             k_row_data.append(rr)
                         r.pop(k, None)
                 list_of_pop_fields[table_name].append(k)
