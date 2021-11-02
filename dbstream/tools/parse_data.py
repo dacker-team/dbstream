@@ -12,10 +12,10 @@ def unest_data(row_data, k):
     return result
 
 
-def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None):
+def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, batch_id=None, id_info='dck'):
     table_name = data['table_name']
     row_data = data['data']
-    data['data'] = generate_dck_info(row_data)
+    data['data'] = generate_dck_info(row_data, batch_id=batch_id, id_info=id_info)
     if not list_of_tables_to_send:
         list_of_tables_to_send = []
     if not list_of_pop_fields:
@@ -36,7 +36,10 @@ def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None):
                 list_of_tables_to_send, list_of_pop_fields = treat_json_data(
                     {'table_name': table_name, 'data': row_data},
                     list_of_tables_to_send=list_of_tables_to_send,
-                    list_of_pop_fields=list_of_pop_fields)
+                    list_of_pop_fields=list_of_pop_fields,
+                    batch_id=batch_id,
+                    id_info=id_info
+                )
             elif isinstance(row[k], list):
                 k_row_data = []
                 for r in row_data:
@@ -45,17 +48,19 @@ def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None):
                             rr = r[k][i]
                             if not isinstance(rr, dict):
                                 rr = {'value': rr}
-                            rr['__' + table_name.split('.')[1] + '__dck_id___'] = r['__dck_id___']
-                            rr['__' + table_name.split('.')[1] + '__dck_id___' + 'order'] = i
+                            rr['__' + table_name.split('.')[1] + f'__{id_info}_id___'] = r[f'__{id_info}_id___']
+                            rr['__' + table_name.split('.')[1] + f'__{id_info}_id___' + 'order'] = i
                             k_row_data.append(rr)
                         r.pop(k, None)
                 list_of_pop_fields[table_name].append(k)
-                k_row_data = generate_dck_info(k_row_data)
+                k_row_data = generate_dck_info(k_row_data, batch_id=batch_id, id_info=id_info)
                 k_data = {'table_name': k_table_name, 'data': k_row_data}
                 list_of_tables_to_send.append(k_data)
                 list_of_tables_to_send, list_of_pop_fields = treat_json_data(k_data,
                                                                              list_of_tables_to_send=list_of_tables_to_send,
-                                                                             list_of_pop_fields=list_of_pop_fields)
+                                                                             list_of_pop_fields=list_of_pop_fields,
+                                                                             batch_id=batch_id,
+                                                                             id_info=id_info)
     if not list_of_tables_to_send:
         list_of_tables_to_send = [{'table_name': table_name, 'data': row_data}]
     elif table_name not in [t['table_name'] for t in list_of_tables_to_send]:
