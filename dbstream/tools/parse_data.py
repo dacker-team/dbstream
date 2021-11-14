@@ -43,7 +43,7 @@ def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, 
             elif isinstance(row[k], list):
                 k_row_data = []
                 for r in row_data:
-                    if r.get(k):
+                    if r.get(k) is not None:
                         for i in range(len(r[k])):
                             rr = r[k][i]
                             if not isinstance(rr, dict):
