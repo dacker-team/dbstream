@@ -1,5 +1,4 @@
 import json
-from json import JSONDecodeError
 
 from dbstream.tools.dck_infos import generate_dck_info
 
