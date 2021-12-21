@@ -1,3 +1,5 @@
+import json
+
 from dbstream.tools.dck_infos import generate_dck_info
 
 
@@ -30,6 +32,16 @@ def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, 
                 continue
             if k in list_of_pop_fields[table_name]:
                 continue
+            if isinstance(row[k], str):
+                try:
+                    if isinstance(json.loads(row[k]), dict) or isinstance(json.loads(row[k]), list):
+                        for i in range(len(row_data)):
+                            try:
+                                row_data[i][k] = json.loads(row_data[i][k])
+                            except TypeError:
+                                pass
+                except ValueError:
+                    pass
             if isinstance(row[k], dict):
                 row_data = unest_data(row_data, k)
                 list_of_pop_fields[table_name].append(k)
