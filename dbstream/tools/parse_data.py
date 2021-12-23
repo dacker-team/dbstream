@@ -38,7 +38,7 @@ def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, 
                         for i in range(len(row_data)):
                             try:
                                 row_data[i][k] = json.loads(row_data[i][k])
-                            except TypeError:
+                            except (TypeError, KeyError):
                                 pass
                 except ValueError:
                     pass
