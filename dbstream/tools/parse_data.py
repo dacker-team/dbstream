@@ -67,7 +67,6 @@ def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, 
                 list_of_pop_fields[table_name].append(k)
                 k_row_data = generate_dck_info(k_row_data, batch_id=batch_id, id_info=id_info)
                 k_data = {'table_name': k_table_name, 'data': k_row_data}
-                list_of_tables_to_send.append(k_data)
                 list_of_tables_to_send, list_of_pop_fields = treat_json_data(k_data,
                                                                              list_of_tables_to_send=list_of_tables_to_send,
                                                                              list_of_pop_fields=list_of_pop_fields,
