@@ -20,7 +20,6 @@ setuptools.setup(
     ],
     python_requires='>=3',
     install_requires=[
-        "sshtunnel==0.1.5",
         "dacktool>=0.0.7",
         "requests>=2.22.0",
         "google-api-core>=2.3.2"

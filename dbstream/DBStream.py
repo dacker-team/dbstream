@@ -11,7 +11,6 @@ import requests
 
 from dbstream.tools.parse_data import treat_json_data
 from dbstream.tools.regex import replace_query_details
-from dbstream.tunnel import create_ssh_tunnel
 
 from google.api_core.exceptions import Forbidden
 
@@ -20,9 +19,7 @@ class DBStream:
     def __init__(self, instance_name, client_id, special_env=None, id_info='dck'):
         self.instance_name = instance_name
         self.instance_type_prefix = ""
-        self.ssh_init_port = ""
         self.client_id = client_id
-        self.ssh_tunnel = None
         unix_time = time.mktime(datetime.datetime.now().timetuple())
         self.dbstream_instance_id = 'df-' + str(unix_time) + '-' + str(random.randint(1000, 9999))
         self.special_env = special_env if special_env else None
@@ -41,12 +38,8 @@ class DBStream:
         return os.environ[self.prefix() + "_PORT"]
 
     def credentials(self):
-        if self.ssh_tunnel:
-            host = self.ssh_tunnel.local_bind_host
-            port = self.ssh_tunnel.local_bind_port
-        else:
-            host = self.remote_host()
-            port = self.remote_port()
+        host = self.remote_host()
+        port = self.remote_port()
         return {
             'database': os.environ[self.prefix() + "_DATABASE"],
             'user': os.environ[self.prefix() + "_USERNAME"],
@@ -54,15 +47,6 @@ class DBStream:
             'port': port,
             'password': os.environ[self.prefix() + "_PASSWORD"],
         }
-
-    def create_tunnel(self):
-        self.ssh_tunnel = create_ssh_tunnel(
-            instance=self.instance_name,
-            port=self.ssh_init_port,
-            remote_host=self.remote_host(),
-            remote_port=self.remote_port()
-        )
-        return self.ssh_tunnel
 
     def _execute_query_custom(self, query) -> dict:
         self.error_if_function_not_exist("_execute_query_custom")
@@ -91,7 +75,6 @@ class DBStream:
                         "client_id": self.client_id,
                         "instance_type_prefix": self.instance_type_prefix,
                         "timestamp": str(datetime.datetime.now()),
-                        "ssh_tunnel": True if self.ssh_tunnel else False,
                         "local_absolute_path": os.getcwd(),
                         "execute_query": True,
                         'schema_name': schema_name,
@@ -135,7 +118,6 @@ class DBStream:
                     "nb_rows": len(data_copy2["rows"]),
                     "nb_columns": len(data_copy2["columns_name"]),
                     "timestamp": str(datetime.datetime.now()),
-                    "ssh_tunnel": True if self.ssh_tunnel else False,
                     "local_absolute_path": os.getcwd(),
                     "replace": replace
                 }
