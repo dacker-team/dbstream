@@ -135,6 +135,7 @@ class DBStream:
             column_names = []
             for r in d['data']:
                 for k in r.keys():
+                    k = k.replace(' ', '')
                     if k in ('authorization', 'default'):
                         k = k + '_'
                     if k not in column_names:
