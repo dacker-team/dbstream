@@ -92,7 +92,7 @@ class DBStream:
         pass
 
     def send_data(self, data, replace=True, apply_special_env=True, **kwargs):
-        data["columns_name"] = [c.replace(".", "_").replace("(", "_").replace(")", "_") for c in data["columns_name"]]
+        data["columns_name"] = [c.replace(".", "_").replace("(", "_").replace(")", "_").replace(" ", "") for c in data["columns_name"]]
         data_copy = copy.deepcopy(data)
         if apply_special_env and self.special_env:
             schema_name = data_copy["table_name"].split(".")[0]
@@ -135,7 +135,6 @@ class DBStream:
             column_names = []
             for r in d['data']:
                 for k in r.keys():
-                    k = k.replace(' ', '')
                     if k in ('authorization', 'default'):
                         k = k + '_'
                     if k not in column_names:
