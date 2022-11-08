@@ -14,6 +14,7 @@ from dbstream.tools.regex import replace_query_details
 
 from google.api_core.exceptions import Forbidden
 
+
 class DBStream:
 
     def __init__(self, instance_name, client_id, special_env=None, id_info='dck'):
@@ -92,7 +93,28 @@ class DBStream:
         pass
 
     def send_data(self, data, replace=True, apply_special_env=True, **kwargs):
-        data["columns_name"] = [c.replace(".", "_").replace("(", "_").replace(")", "_").replace(" ", "") for c in data["columns_name"]]
+        columns_name = [
+            c
+                .replace(".", "_")
+                .replace("(", "_")
+                .replace(")", "_")
+                .replace(" ", "")
+                .replace("$", "_")
+            for c in data["columns_name"]]
+        counter = {}
+        new_columns_name = []
+        for c in columns_name:
+            if counter.get(c.lower()):
+                new_columns_name.append(
+                    c.lower() + "_%s" % (counter[c.lower()] + 1)
+                )
+                counter[c.lower()] = counter[c.lower()] + 1
+            else:
+                new_columns_name.append(c.lower())
+                counter[c.lower()] = 1
+
+        data["columns_name"] = new_columns_name
+
         data_copy = copy.deepcopy(data)
         if apply_special_env and self.special_env:
             schema_name = data_copy["table_name"].split(".")[0]
