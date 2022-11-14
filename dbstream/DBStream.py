@@ -164,7 +164,7 @@ class DBStream:
             data_to_send = {
                 "columns_name": column_names,
                 "rows": [[r.get(c) for c in column_names] for r in d['data']],
-                "table_name": d.get('table_name')
+                "table_name": d.get('table_name').replace("$", "_")
             }
             if len(data_to_send['columns_name']) > 0:
                 try:
