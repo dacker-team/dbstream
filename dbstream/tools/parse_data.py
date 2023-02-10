@@ -56,14 +56,17 @@ def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, 
                 k_row_data = []
                 for r in row_data:
                     if r.get(k) is not None:
-                        for i in range(len(r[k])):
-                            rr = r[k][i]
-                            if not isinstance(rr, dict):
-                                rr = {'value': rr}
-                            rr['__' + table_name.split('.')[1] + f'__{id_info}_id___'] = r[f'__{id_info}_id___']
-                            rr['__' + table_name.split('.')[1] + f'__{id_info}_id___' + 'order'] = i
-                            k_row_data.append(rr)
-                        r.pop(k, None)
+                        try:
+                            for i in range(len(r[k])):
+                                rr = r[k][i]
+                                if not isinstance(rr, dict):
+                                    rr = {'value': rr}
+                                rr['__' + table_name.split('.')[1] + f'__{id_info}_id___'] = r[f'__{id_info}_id___']
+                                rr['__' + table_name.split('.')[1] + f'__{id_info}_id___' + 'order'] = i
+                                k_row_data.append(rr)
+                            r.pop(k, None)
+                        except:
+                            pass
                 list_of_pop_fields[table_name].append(k)
                 k_row_data = generate_dck_info(k_row_data, batch_id=batch_id, id_info=id_info)
                 k_data = {'table_name': k_table_name, 'data': k_row_data}
