@@ -103,6 +103,7 @@ class DBStream:
                 .replace("ç", "c")
                 .replace("-", "_")
                 .replace("@", "_")
+                .replace(":", "_")
             for c in data["columns_name"]]
         counter = {}
         new_columns_name = []
