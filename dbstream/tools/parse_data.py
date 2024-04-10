@@ -15,16 +15,7 @@ def unest_data(row_data, k):
 
 
 def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, batch_id=None, id_info='dck'):
-    table_name = (data['table_name']
-                  .replace(".", "_")
-                  .replace("(", "_")
-                  .replace(")", "_")
-                  .replace(" ", "")
-                  .replace("$", "_")
-                  .replace("ç", "c")
-                  .replace("-", "_")
-                  .replace("@", "_")
-                  .replace(":", "_"))
+    table_name = data['table_name']
     row_data = data['data']
     data['data'] = generate_dck_info(row_data, batch_id=batch_id, id_info=id_info)
     if not list_of_tables_to_send:
