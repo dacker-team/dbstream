@@ -165,20 +165,10 @@ class DBStream:
                         k = k + '_'
                     if k not in column_names:
                         column_names.append(k)
-            table_name = (d.get('table_name')
-                          .replace(".", "_")
-                          .replace("(", "_")
-                          .replace(")", "_")
-                          .replace(" ", "")
-                          .replace("$", "_")
-                          .replace("ç", "c")
-                          .replace("-", "_")
-                          .replace("@", "_")
-                          .replace(":", "_"))
             data_to_send = {
                 "columns_name": column_names,
                 "rows": [[r.get(c) for c in column_names] for r in d['data']],
-                "table_name": table_name
+                "table_name": d.get('table_name').replace("$", "_")
             }
             if len(data_to_send['columns_name']) > 0:
                 try:
