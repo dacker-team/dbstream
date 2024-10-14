@@ -14,7 +14,7 @@ def unest_data(row_data, k):
     return result
 
 
-def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, batch_id=None, id_info='dck'):
+def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, batch_id=None, id_info='dck', parse_dict=True):
     table_name = data['table_name']
     row_data = data['data']
     data['data'] = generate_dck_info(row_data, batch_id=batch_id, id_info=id_info)
@@ -34,7 +34,7 @@ def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, 
                 continue
             if isinstance(row[k], str):
                 try:
-                    if isinstance(json.loads(row[k]), dict) or isinstance(json.loads(row[k]), list):
+                    if parse_dict and (isinstance(json.loads(row[k]), dict) or isinstance(json.loads(row[k]), list)):
                         for i in range(len(row_data)):
                             try:
                                 row_data[i][k] = json.loads(row_data[i][k])
@@ -42,7 +42,7 @@ def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, 
                                 pass
                 except ValueError:
                     pass
-            if isinstance(row[k], dict):
+            if parse_dict and isinstance(row[k], dict):
                 row_data = unest_data(row_data, k)
                 list_of_pop_fields[table_name].append(k)
                 list_of_tables_to_send, list_of_pop_fields = treat_json_data(
@@ -52,7 +52,7 @@ def treat_json_data(data, list_of_tables_to_send=None, list_of_pop_fields=None, 
                     batch_id=batch_id,
                     id_info=id_info
                 )
-            elif isinstance(row[k], list):
+            elif parse_dict and isinstance(row[k], list):
                 k_row_data = []
                 for r in row_data:
                     if r.get(k) is not None:
