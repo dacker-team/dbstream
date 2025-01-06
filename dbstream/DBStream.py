@@ -86,7 +86,7 @@ class DBStream:
             return None
         return result
 
-    def _send_data_custom(self, data, replace, **kwargs):
+    def _send_data_custom(self, data, replace, parse_dict=True, **kwargs):
         pass
 
     def _send(self, **args):
@@ -104,6 +104,7 @@ class DBStream:
                 .replace("-", "_")
                 .replace("@", "_")
                 .replace(":", "_")
+                .replace("/", "_")
             for c in data["columns_name"]]
         counter = {}
         new_columns_name = []
