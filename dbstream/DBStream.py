@@ -86,13 +86,13 @@ class DBStream:
             return None
         return result
 
-    def _send_data_custom(self, data, replace, **kwargs):
+    def _send_data_custom(self, data, replace, parse_dict=True, **kwargs):
         pass
 
     def _send(self, **args):
         pass
 
-    def send_data(self, data, replace=True, apply_special_env=True, **kwargs):
+    def send_data(self, data, replace=True, apply_special_env=True, parse_dict=True, **kwargs):
         columns_name = [
             c
                 .replace(".", "_")
@@ -130,7 +130,7 @@ class DBStream:
                 kwargs["other_table_to_update"] = "%s_%s.%s" % (schema_name, self.special_env, table_name)
 
         data_copy2 = copy.deepcopy(data_copy)
-        if self._send_data_custom(data_copy, replace, **kwargs) != 0:
+        if self._send_data_custom(data_copy, replace, parse_dict=parse_dict, **kwargs) != 0:
             url = os.environ.get("MONITORING_URL")
             if url:
                 table_schema_name = data_copy2["table_name"].split(".")
@@ -150,11 +150,8 @@ class DBStream:
                 r = requests.post(url=url, data=json.dumps(body))
                 print(r.status_code)
 
-    def send(self, data, replace=False, apply_special_env=True, delay=5, batch_id=None, **kwargs):
+    def send(self, data, replace=False, apply_special_env=True, delay=5, batch_id=None, parse_dict=True, **kwargs):
         # data['data'] = generate_dck_info(data['data'])
-        parse_dict = kwargs.get("parse_dict")
-        if not parse_dict:
-            parse_dict = True
         list_of_tables_to_send, list_of_pop_fields = treat_json_data(data, batch_id=batch_id, id_info=self.id_info, parse_dict=parse_dict)
         for d in list_of_tables_to_send:
             # if d.get('table_name') == 'test.test_orders_fulfillments_line_items':
@@ -178,12 +175,12 @@ class DBStream:
             }
             if len(data_to_send['columns_name']) > 0:
                 try:
-                    self.send_data(data=data_to_send, replace=replace, apply_special_env=apply_special_env, **kwargs)
+                    self.send_data(data=data_to_send, replace=replace, apply_special_env=apply_special_env, parse_dict=parse_dict, **kwargs)
                 except Forbidden:
                     time.sleep(delay)
-                    self.send_data(data=data_to_send, replace=replace, apply_special_env=apply_special_env, **kwargs)
+                    self.send_data(data=data_to_send, replace=replace, apply_special_env=apply_special_env, parse_dict=parse_dict, **kwargs)
 
-    def send_temp_data(self, data, schema_prefix, table, column_names, apply_special_env=True):
+    def send_temp_data(self, data, schema_prefix, table, column_names, apply_special_env=True, parse_dict=True):
         data_to_send = {
             "columns_name": column_names,
             "rows": [[r.get(c) for c in column_names] for r in data],
@@ -192,7 +189,8 @@ class DBStream:
             data=data_to_send,
             other_table_to_update=schema_prefix + '.' + table,
             replace=False,
-            apply_special_env=apply_special_env)
+            apply_special_env=apply_special_env,
+            parse_dict=parse_dict)
 
     def clean(self, selecting_id, schema_prefix, table):
         self.error_if_function_not_exist("clean")
